@@ -11,7 +11,8 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { plainToInstance } from 'class-transformer';
 import { hashPassword } from 'src/common/helpers/hash.helper';
-import { FindUsersQueryDto } from './dto/find-users.query.dto';
+import { FindAllUsersQueryDto } from './dto/find-all-users.query.dto';
+import { AllUsers } from './interfaces/all-users.interface';
 
 @Injectable()
 export class UsersService {
@@ -42,15 +43,8 @@ export class UsersService {
     return this.toDto(newUser);
   }
 
-  async findAll(
-    query: FindUsersQueryDto,
-  ): Promise<{
-    data: UserDto[];
-    total: number;
-    limit: number;
-    offset: number;
-  }> {
-    const { limit, offset, email, role } = query;
+  async findAll(query: FindAllUsersQueryDto ): Promise<AllUsers> {
+    const { limit = 10, offset = 0, email, role } = query;
 
     const where: any = {};
     if (email) where.email = email;
@@ -79,9 +73,8 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<UserDto> {
     const entity = await this.userRepository.preload({ id, ...updateUserDto });
-
     if (!entity) throw new NotFoundException(`User with id ${id} not found`);
-
+    
     const saved = await this.userRepository.save(entity);
     return this.toDto(saved);
   }
