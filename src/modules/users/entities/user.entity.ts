@@ -36,6 +36,10 @@ export class User {
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   deletedAt?: Date | null;
 
-  @OneToMany(() => Notification, (notification) => notification.user)
+  @OneToMany(
+    () => Notification, 
+    (notification) => notification.user,
+    {cascade: true}
+  )
   notifications: Notification[];
 }
