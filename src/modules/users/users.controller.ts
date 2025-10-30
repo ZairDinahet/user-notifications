@@ -12,27 +12,32 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FindUsersQueryDto } from './dto/find-users.query.dto';
+import { FindAllUsersQueryDto } from './dto/find-all-users.query.dto';
 import { UserDto } from './dto/user.dto';
+import { AllUsers } from './interfaces/all-users.interface';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
+  async create(
+    @Body() createUserDto: CreateUserDto
+  ): Promise<UserDto> {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
   async findAll(
-    @Query() query: FindUsersQueryDto,
-  ): Promise<{ data: UserDto[]; total: number; limit: number; offset: number }> {
+    @Query() query: FindAllUsersQueryDto
+  ): Promise<AllUsers> {
     return this.usersService.findAll(query);
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<UserDto> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<UserDto> {
     return this.usersService.findOne(id);
   }
 
